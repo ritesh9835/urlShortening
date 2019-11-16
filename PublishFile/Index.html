@@ -1,0 +1,56 @@
+﻿<html>
+<head>
+    <title>Nintext - URL Shortening  </title>
+    <link rel="stylesheet" href="/Content/bootstrap.min.css" />
+</head>
+<body>
+
+   
+    <div class="col-md-10">
+        <h2>Enter URL</h2>
+        <form id="form1">
+            <div class="col-md-8">
+                <input type="text" class="form-control col-md-4" name="url" id="urlshort" placeholder="Shorten your URL" />
+                <br /><br />
+                <input type="button" class="btn btn-primary col-md-2" id="submit" value="Submit" />
+                <span class="col-sm-1"></span>
+                <input type="button" class="btn btn-warning" onclick="location.reload();" value="Refresh" />
+            </div>
+        </form>
+        <div class="col-md-6">
+            <a target="_blank" id="responseLink" href="#"> <p id="response"></p></a>
+            <p class="alert alert-danger" hidden>
+                Invalid URL
+            </p>
+        </div>
+    </div>
+
+    <script src="/Scripts/jquery-3.3.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            jQuery.support.cors = true;
+            $("#submit").click(function () {
+                var pattern = /^(http|https)?:\/\/[a-zA-Z0-9-\.]+\.[a-z]{2,4}/;
+                if (pattern.test($("#urlshort").val())) {
+                    $.ajax({
+                        type: 'Post',
+                        url: '/api/ShortUrl/SaveUrl?urlParm=' + $("#urlshort").val(),
+                        dataType: 'json',
+                        success: function (data, textStatus, xhr) {
+                            $("#response").html(data);
+                            $("#responseLink").attr("href", data);
+                        },
+                    });
+                }
+                else {
+                    $(".alert-danger").show();
+                    $(".alert-danger").fadeTo(2000, 500).slideUp(500, function () {
+                        $(".alert-danger").slideUp(500);
+                    });
+                }
+
+            });
+        });
+    </script>
+</body>
+</html>
